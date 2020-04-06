@@ -15,6 +15,7 @@ import webbrowser
 from bs4 import BeautifulSoup
 import requests
 import json
+from typing import List
 
 # Este método simplemente abre el paper si es que contiene la palabra buscada
 # Inputs: Url que contiene el título buscado, word_in_paper la palabra que se busca en paper
@@ -59,7 +60,7 @@ def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
             print("El título del paper es: " + i['title'])
             analyzePaperContent(i['link'], word_in_paper)
 
-def openUrlIfWordInResults(url, word_in_paper, results):
+def openUrlIfWordInResults(url: str, word_in_paper: str, results: List[any]) -> None:
     isWordInPaper = lambda res: res.text.find(word_in_paper) != -1
     if (any(map(isWordInPaper, results))):
         webbrowser.open(url)
