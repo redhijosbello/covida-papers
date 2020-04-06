@@ -23,11 +23,11 @@ from typing import List
 from dataTypes.PaperData import PaperData
 from utils.PaperJsonEncoder import PaperJsonEncoder
 
-def analyzePaperContent(url: str, word_in_paper: str) -> None:
+def isPaperContentOfInterest(url: str, word_in_paper: str) -> bool:
     response = requests.get(url, timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
     results = content.find_all("div", {"class":"section-paragraph"}) #Se obtienen todos los parrafos del paper
-    openUrlIfWordInResults(url, word_in_paper, results)
+    return isWordInResults(word_in_paper, results)
 
     """ No está implementado aún el descargar automáticamente el paper a local
     descarga = content.findAll('div', attrs={"class": "article-tools__holder pull-right"})
@@ -46,18 +46,31 @@ def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
     with open('lancetSearchData.json', 'w') as outfile:
         json.dump(paperArray, outfile, cls=PaperJsonEncoder)
               
-    with open('lancetSearchData.json') as json_data:
-        jsonData = json.load(json_data)
+    papersOfInterest = filterPapersOfInterest(
+        paperArray,
+        word_in_title,
+        word_in_paper
+    )
+    for paper in papersOfInterest:
+        webbrowser.open(paper.link)
 
-    for i in jsonData:
-        if i['title'].find(word_in_title)!=-1:
-            print("El título del paper es: " + i['title'])
-            analyzePaperContent(i['link'], word_in_paper)
+def filterPapersOfInterest(
+        papers: List[PaperData],
+        word_in_title: str,
+        word_in_paper: str) -> List[PaperData]:
 
-def openUrlIfWordInResults(url: str, word_in_paper: str, results: List[any]) -> None:
-    isWordInPaper = lambda res: res.text.find(word_in_paper) != -1
-    if any(map(isWordInPaper, results)):
-        webbrowser.open(url)
+    papersTitleMatches = filter(
+        lambda paper: paper.title.find(word_in_title) != -1,
+        papers
+    )
+    return list(filter(
+        lambda paper: isPaperContentOfInterest(paper.link, word_in_paper),
+        papersTitleMatches
+    ))
+
+def isWordInResults(word: str, results: List[any]) -> bool:
+    isWordInText = lambda res: res.text.find(word) != -1
+    return any(map(isWordInText, results))
 
 def getPapersFromUrl(url: str) -> List[PaperData]:
     response = requests.get(url, timeout=10)
