@@ -23,7 +23,6 @@ from typing import List
 from dataTypes.PaperData import PaperData
 from utils.PaperJsonEncoder import PaperJsonEncoder
 
-
 def analyzePaperContent(url: str, word_in_paper: str) -> None:
     response = requests.get(url, timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
@@ -39,19 +38,13 @@ def analyzePaperContent(url: str, word_in_paper: str) -> None:
     
 # Función que scrappea la página principal de Lancet en búsqueda de palabras claves en el título
 # Palabra que se busca en titulo, palabra que se busca en el paper.
-        
+
 def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
     url = "https://www.thelancet.com/coronavirus"
-    response = requests.get(url,timeout=10)
+    response = requests.get(url, timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
-    paperArray = []
-    for paper in content.findAll('div', attrs={"class": "articleCitation"}):
-        paperObject = PaperData(
-            paper.find('h4', attrs={"class": "title"}).text,
-            "https://www.thelancet.com" + paper.find('a')['href']
-        )
-        paperArray.append(paperObject)
-    
+    paperArray = getPapersFromContent(content)
+
     with open('lancetSearchData.json', 'w') as outfile:
         json.dump(paperArray, outfile, cls=PaperJsonEncoder)
               
@@ -65,8 +58,18 @@ def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
 
 def openUrlIfWordInResults(url: str, word_in_paper: str, results: List[any]) -> None:
     isWordInPaper = lambda res: res.text.find(word_in_paper) != -1
-    if (any(map(isWordInPaper, results))):
+    if any(map(isWordInPaper, results)):
         webbrowser.open(url)
+
+def getPapersFromContent(content):
+    paperFromData = lambda paper: PaperData(
+        paper.find('h4', attrs={"class": "title"}).text,
+        "https://www.thelancet.com" + paper.find('a')['href']
+    )
+    return map(
+        paperFromData,
+        content.findAll('div', attrs={"class": "articleCitation"})
+    )
 
 # Ejecución
 lancetScrapping("mask", "COVID-19")
