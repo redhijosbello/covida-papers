@@ -41,9 +41,7 @@ def analyzePaperContent(url: str, word_in_paper: str) -> None:
 
 def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
     url = "https://www.thelancet.com/coronavirus"
-    response = requests.get(url, timeout=10)
-    content = BeautifulSoup(response.content, "html.parser")
-    paperArray = getPapersFromContent(content)
+    paperArray = getPapersFromUrl(url)
 
     with open('lancetSearchData.json', 'w') as outfile:
         json.dump(paperArray, outfile, cls=PaperJsonEncoder)
@@ -61,15 +59,20 @@ def openUrlIfWordInResults(url: str, word_in_paper: str, results: List[any]) -> 
     if any(map(isWordInPaper, results)):
         webbrowser.open(url)
 
-def getPapersFromContent(content):
+def getPapersFromUrl(url: str) -> List[PaperData]:
+    response = requests.get(url, timeout=10)
+    content = BeautifulSoup(response.content, "html.parser")
+    return getPapersFromContent(content)
+
+def getPapersFromContent(content) -> List[PaperData]:
     paperFromData = lambda paper: PaperData(
         paper.find('h4', attrs={"class": "title"}).text,
         "https://www.thelancet.com" + paper.find('a')['href']
     )
-    return map(
+    return list(map(
         paperFromData,
         content.findAll('div', attrs={"class": "articleCitation"})
-    )
+    ))
 
 # Ejecución
 lancetScrapping("mask", "COVID-19")
