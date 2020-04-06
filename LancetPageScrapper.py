@@ -21,16 +21,11 @@ import json
 # Output None
 
 def analyzePaperContent(url: str, word_in_paper: str) -> None:
-    open_page = False
-    response = requests.get(url,timeout=10)
+    response = requests.get(url, timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
-    result = content.find_all("div", {"class":"section-paragraph"}) #Se obtienen todos los parrafos del paper
-    for res in result:
-        if res.text.find(word_in_paper) != -1:                      #Si tiene la palabra entonces se abre el paper
-            open_page = True 
-            break
-    if open_page == True:
-        webbrowser.open(url)
+    results = content.find_all("div", {"class":"section-paragraph"}) #Se obtienen todos los parrafos del paper
+    openUrlIfWordInResults(url, word_in_paper, results)
+
     """ No está implementado aún el descargar automáticamente el paper a local
     descarga = content.findAll('div', attrs={"class": "article-tools__holder pull-right"})
     for i in descarga:
@@ -62,7 +57,12 @@ def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
     for i in jsonData:
         if i['title'].find(word_in_title)!=-1:
             print("El título del paper es: " + i['title'])
-            analyzePaperContent(i['link'], word_in_paper)  
+            analyzePaperContent(i['link'], word_in_paper)
+
+def openUrlIfWordInResults(url, word_in_paper, results):
+    isWordInPaper = lambda res: res.text.find(word_in_paper) != -1
+    if (any(map(isWordInPaper, results))):
+        webbrowser.open(url)
 
 # Ejecución
 lancetScrapping("mask", "COVID-19")
