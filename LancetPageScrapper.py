@@ -20,6 +20,9 @@ from typing import List
 # Este método simplemente abre el paper si es que contiene la palabra buscada
 # Inputs: Url que contiene el título buscado, word_in_paper la palabra que se busca en paper
 # Output None
+from dataTypes.PaperData import PaperData
+from utils.PaperJsonEncoder import PaperJsonEncoder
+
 
 def analyzePaperContent(url: str, word_in_paper: str) -> None:
     response = requests.get(url, timeout=10)
@@ -43,14 +46,14 @@ def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
     content = BeautifulSoup(response.content, "html.parser")
     paperArray = []
     for paper in content.findAll('div', attrs={"class": "articleCitation"}):
-        paperObject = {
-            "title": paper.find('h4', attrs={"class": "title"}).text,
-            "link": "https://www.thelancet.com" + paper.find('a')['href'] 
-        }
+        paperObject = PaperData(
+            paper.find('h4', attrs={"class": "title"}).text,
+            "https://www.thelancet.com" + paper.find('a')['href']
+        )
         paperArray.append(paperObject)
     
     with open('lancetSearchData.json', 'w') as outfile:
-        json.dump(paperArray, outfile)
+        json.dump(paperArray, outfile, cls=PaperJsonEncoder)
               
     with open('lancetSearchData.json') as json_data:
         jsonData = json.load(json_data)
