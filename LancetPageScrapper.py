@@ -20,7 +20,7 @@ import json
 # Inputs: Url que contiene el título buscado, word_in_paper la palabra que se busca en paper
 # Output None
 
-def analyzePaperContent(url,word_in_paper):
+def analyzePaperContent(url: str, word_in_paper: str) -> None:
     open_page = False
     response = requests.get(url,timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
@@ -41,7 +41,7 @@ def analyzePaperContent(url,word_in_paper):
 # Función que scrappea la página principal de Lancet en búsqueda de palabras claves en el título
 # Palabra que se busca en titulo, palabra que se busca en el paper.
         
-def lancetScrapping(word_in_title, word_in_paper):
+def lancetScrapping(word_in_title: str, word_in_paper: str) -> None:
     url = "https://www.thelancet.com/coronavirus"
     response = requests.get(url,timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
