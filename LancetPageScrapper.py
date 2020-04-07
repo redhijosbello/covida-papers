@@ -15,54 +15,90 @@ import webbrowser
 from bs4 import BeautifulSoup
 import requests
 import json
+from typing import List
 
 # Este método simplemente abre el paper si es que contiene la palabra buscada
 # Inputs: Url que contiene el título buscado, word_in_paper la palabra que se busca en paper
 # Output None
+from dataTypes.PaperData import PaperData
+from utils.PaperJsonEncoder import PaperJsonEncoder
 
-def analyzePaperContent(url,word_in_paper):
-    open_page = False
-    response = requests.get(url,timeout=10)
-    content = BeautifulSoup(response.content, "html.parser")
-    result = content.find_all("div", {"class":"section-paragraph"}) #Se obtienen todos los parrafos del paper
-    for res in result:
-        if res.text.find(word_in_paper) != -1:                      #Si tiene la palabra entonces se abre el paper
-            open_page = True 
-            break
-    if open_page == True:
-        webbrowser.open(url)
-    """ No está implementado aún el descargar automáticamente el paper a local
+""" No está implementado aún el descargar automáticamente el paper a local
     descarga = content.findAll('div', attrs={"class": "article-tools__holder pull-right"})
     for i in descarga:
         link = descarga.find('a')['href']
         webbrowser.open("https://www.thelancet.com" + link)
-    """  
+"""
     
 # Función que scrappea la página principal de Lancet en búsqueda de palabras claves en el título
 # Palabra que se busca en titulo, palabra que se busca en el paper.
-        
-def lancetScrapping(word_in_title, word_in_paper):
-    url = "https://www.thelancet.com/coronavirus"
-    response = requests.get(url,timeout=10)
-    content = BeautifulSoup(response.content, "html.parser")
-    paperArray = []
-    for paper in content.findAll('div', attrs={"class": "articleCitation"}):
-        paperObject = {
-            "title": paper.find('h4', attrs={"class": "title"}).text,
-            "link": "https://www.thelancet.com" + paper.find('a')['href'] 
-        }
-        paperArray.append(paperObject)
-    
-    with open('lancetSearchData.json', 'w') as outfile:
-        json.dump(paperArray, outfile)
-              
-    with open('lancetSearchData.json') as json_data:
-        jsonData = json.load(json_data)
 
-    for i in jsonData:
-        if i['title'].find(word_in_title)!=-1:
-            print("El título del paper es: " + i['title'])
-            analyzePaperContent(i['link'], word_in_paper)  
+def getPapersFromLancet() -> List[PaperData]:
+    url = "https://www.thelancet.com/coronavirus"
+    return getPapersFromUrl(url)
+
+def getLancetPapersOfInterest(word_in_title: str, word_in_paper: str) -> List[PaperData]:
+    paperArray = getPapersFromLancet()
+    return filterPapersOfInterest(
+        paperArray,
+        word_in_title,
+        word_in_paper
+    )
+
+def lancetScrappingAndOpenLinks(word_in_title: str, word_in_paper: str) -> None:
+    paperArray = getPapersFromLancet()
+    savePapersToJsonFile(paperArray)
+    papersOfInterest = filterPapersOfInterest(
+        paperArray,
+        word_in_title,
+        word_in_paper
+    )
+    for paper in papersOfInterest:
+        print("El título del paper es: " + paper.title)
+        webbrowser.open(paper.link)
+
+def filterPapersOfInterest(
+        papers: List[PaperData],
+        word_in_title: str,
+        word_in_paper: str) -> List[PaperData]:
+
+    papersTitleMatches = filter(
+        lambda paper: paper.title.find(word_in_title) != -1,
+        papers
+    )
+    return list(filter(
+        lambda paper: isPaperContentOfInterest(paper.link, word_in_paper),
+        papersTitleMatches
+    ))
+
+def isPaperContentOfInterest(url: str, word_in_paper: str) -> bool:
+    response = requests.get(url, timeout=10)
+    content = BeautifulSoup(response.content, "html.parser")
+    results = content.find_all("div", {"class":"section-paragraph"}) #Se obtienen todos los parrafos del paper
+    return isWordInResults(word_in_paper, results)
+
+def isWordInResults(word: str, results: List[any]) -> bool:
+    isWordInText = lambda res: res.text.find(word) != -1
+    return any(map(isWordInText, results))
+
+def getPapersFromUrl(url: str) -> List[PaperData]:
+    response = requests.get(url, timeout=10)
+    content = BeautifulSoup(response.content, "html.parser")
+    return getPapersFromContent(content)
+
+def getPapersFromContent(content) -> List[PaperData]:
+    paperFromData = lambda paper: PaperData(
+        paper.find('h4', attrs={"class": "title"}).text,
+        "https://www.thelancet.com" + paper.find('a')['href']
+    )
+    return list(map(
+        paperFromData,
+        content.findAll('div', attrs={"class": "articleCitation"})
+    ))
+
+def savePapersToJsonFile(paperArray: List[PaperData]) -> None:
+    with open('lancetSearchData.json', 'w') as outfile:
+        json.dump(paperArray, outfile, cls=PaperJsonEncoder)
 
 # Ejecución
-lancetScrapping("mask", "COVID-19")
+#lancetScrappingAndOpenLinks("mask", "COVID-19")
