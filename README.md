@@ -1,10 +1,20 @@
 # covida
 
 ### Requerimientos:
-
+```
 - pip install bs4
 - pip install requests
-- Flask: https://flask.palletsprojects.com/en/1.1.x/installation/
+- pip install Flask
+```
+- mas info de Flask: https://flask.palletsprojects.com/en/1.1.x/installation/
+- Ojo: no instalen SimpleJson, que tiene conflictos en esta app.
+
+### Versión de Python y Flask
+``` 
+flask --version
+```
+- Python 3.7.3 ó +
+- Flask 1.1.2
 
 ### Ejemplo:
 
