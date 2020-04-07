@@ -33,15 +33,12 @@ from utils.PaperJsonEncoder import PaperJsonEncoder
 # Función que scrappea la página principal de Lancet en búsqueda de palabras claves en el título
 # Palabra que se busca en titulo, palabra que se busca en el paper.
 
-def getPapersFromLancet(optionalAction=None) -> List[PaperData]:
+def getPapersFromLancet() -> List[PaperData]:
     url = "https://www.thelancet.com/coronavirus"
-    papers = getPapersFromUrl(url)
-    if optionalAction is not None:
-        optionalAction(papers)
-    return papers
+    return getPapersFromUrl(url)
 
-def getLancetPapersOfInterest(word_in_title: str, word_in_paper: str, optionalAction=None) -> List[PaperData]:
-    paperArray = getPapersFromLancet(optionalAction)
+def getLancetPapersOfInterest(word_in_title: str, word_in_paper: str) -> List[PaperData]:
+    paperArray = getPapersFromLancet()
     return filterPapersOfInterest(
         paperArray,
         word_in_title,
@@ -49,10 +46,12 @@ def getLancetPapersOfInterest(word_in_title: str, word_in_paper: str, optionalAc
     )
 
 def lancetScrappingAndOpenLinks(word_in_title: str, word_in_paper: str) -> None:
-    papersOfInterest = getLancetPapersOfInterest(
+    paperArray = getPapersFromLancet()
+    savePapersToJsonFile(paperArray)
+    papersOfInterest = filterPapersOfInterest(
+        paperArray,
         word_in_title,
-        word_in_paper,
-        savePapersToJsonFile
+        word_in_paper
     )
     for paper in papersOfInterest:
         print("El título del paper es: " + paper.title)
