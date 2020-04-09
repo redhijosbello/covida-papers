@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-from LancetPageScrapper import getPapersFromLancet, getLancetPapersOfInterest, lancetScrappingAndOpenLinks
+from LancetScrapper.LancetPageScrapper import getPapersFromLancet, getLancetPapersOfInterest, lancetScrappingAndOpenLinks
 from utils.PaperJsonEncoder import PaperJsonEncoder
 
 app = Flask(__name__)

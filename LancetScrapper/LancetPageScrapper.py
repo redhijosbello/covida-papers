@@ -98,5 +98,3 @@ def savePapersToJsonFile(paperArray: List[PaperData]) -> None:
     with open('lancetSearchData.json', 'w') as outfile:
         json.dump(paperArray, outfile, cls=PaperJsonEncoder)
 
-# Ejecución
-#lancetScrappingAndOpenLinks("mask", "COVID-19")
