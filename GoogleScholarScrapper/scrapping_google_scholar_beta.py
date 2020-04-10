@@ -40,10 +40,10 @@ def getPapersFromUrl(num_pages, key_words) -> List[PaperData]:
         all_papers_page = search_list_paper.find_elements_by_tag_name("div")
         for i in all_papers_page:
             try:
-                # Aquí no se están obteniendo siempre los links correctos
 
-                name = i.find_element_by_tag_name("a").get_attribute("text")
-                link = i.find_element_by_tag_name("a").get_attribute("href")
+                # Aquí no se están obteniendo siempre los links correctos
+                name = i.find_element_by_tag_name("h3").get_attribute("text")
+                link = i.find_element_by_tag_name("h3").get_attribute("href")
                 temp = pd.DataFrame({"name": [name], "link": [link]})
                 df_elements = df_elements.append(temp, ignore_index=True)
             except:
