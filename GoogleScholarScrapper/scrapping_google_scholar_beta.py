@@ -6,6 +6,11 @@ from typing import List
 from dataTypes.PaperData import PaperData
 from utils.PaperJsonEncoder import PaperJsonEncoder
 import json
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+import sys
 
 def clean_results(df_result):
     df_result.dropna(inplace=True)
@@ -25,34 +30,50 @@ def getPapersFromGoogleScholar(num_pages, key_words) -> List[PaperData]:
 
 
 def getPapersFromUrl(num_pages, key_words) -> List[PaperData]:
-    google_drive = ".\\chromedriver_win32\\chromedriver.exe"
-    driver = webdriver.Chrome(google_drive)
-    link_to_search = "https://scholar.google.com/scholar?start=0&hl=es&as_sdt=0,5&q={0}".format(key_words[0])
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    if(sys.platform == 'linux'):
+        google_drive = "./chromedriver"
+    else:
+        google_drive = ".\\GoogleScholarScrapper\\chromedriver_win32\\chromedriver.exe"
+
+    driver = webdriver.Chrome(google_drive, chrome_options=options)
+    link_to_search = "https://scholar.google.com/scholar?start=0&hl=es&as_sdt=0,5&q={0}".format(key_words)
+    print(link_to_search)
     driver.get(link_to_search)
     next_page = True
-    page_num = 1
+    page_num = 0
     stop = num_pages
     df_elements = pd.DataFrame({"name": [], "link": []})
     while next_page:
         link_to_ordered = link_to_search.replace("start=0", "start=" + str(page_num * 10))
-        time.sleep(10)
-        search_list_paper = driver.find_element_by_xpath('//*[@id="gs_res_ccl_mid"]')
-        all_papers_page = search_list_paper.find_elements_by_tag_name("div")
-        for i in all_papers_page:
+        wait = WebDriverWait(driver,20)
+        #time.sleep(5)
+        wait.until(EC.presence_of_element_located((By.ID,'gs_res_ccl_mid')))
+        search_list_paper = driver.find_elements_by_xpath('//*[@id="gs_res_ccl_mid"]//div//h3//a')
+        #all_papers_page = search_list_paper.find_elements_by_tag_name("div")
+        for i in search_list_paper:
             try:
-
                 # Aquí no se están obteniendo siempre los links correctos
-                name = i.find_element_by_tag_name("h3").get_attribute("text")
-                link = i.find_element_by_tag_name("h3").get_attribute("href")
+                #name = i.find_element_by_tag_name("h3").get_attribute("text")
+                name = i.get_attribute('textContent')
+                link = i.get_attribute('href')
+                #link = i.find_element_by_tag_name("h3").get_attribute("href")
+                #print(name)
+                #print(link)
                 temp = pd.DataFrame({"name": [name], "link": [link]})
+                #print(temp)
                 df_elements = df_elements.append(temp, ignore_index=True)
+                #print(df_elements)
             except:
                 continue
         page_num += 1
         df_results = clean_results(df_elements)
-        time.sleep(np.random.uniform(11, 17))
-        driver.quit()
-        driver = webdriver.Chrome(google_drive)
+        #time.sleep(np.random.uniform(11, 17))
+        #driver.quit()
+        #driver = webdriver.Chrome(google_drive)
         driver.get(link_to_ordered)
         try:
             driver.get(link_to_ordered)
@@ -66,9 +87,13 @@ def getPapersFromUrl(num_pages, key_words) -> List[PaperData]:
 
 def getPapersFromDF(df) -> List[PaperData]:
     list = []
-    for i in range(df.shape[0]):
-        list.append(PaperData(df.iloc[i][0], df.iloc[i][1]))
-    return savePapersToJsonFile(list)
+    for i in range(df.size):
+        try:
+            list.append(PaperData(df.iloc[i][0], df.iloc[i][1]))
+        except:
+            continue
+    return list
+    #return savePapersToJsonFile(list)
 
 
 def savePapersToJsonFile(paperArray: List[PaperData]) -> None:
@@ -76,4 +101,4 @@ def savePapersToJsonFile(paperArray: List[PaperData]) -> None:
         json.dump(paperArray, outfile, cls=PaperJsonEncoder)
 
 
-getPapersFromGoogleScholar(1, ["covid+mask+register"])
+#getPapersFromGoogleScholar(1, ["covid+mask+register"])
