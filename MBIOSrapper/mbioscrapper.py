@@ -29,9 +29,6 @@ def getPapersFromMbio() -> List[PaperData]:
     return getPapersFromUrl(url)
 
 
-# Función que scrappea la página principal de Lancet en búsqueda de palabras claves en el título
-# Palabra que se busca en titulo, palabra que se busca en el paper.
-
 def getMbioPapersOfInterest(word_in_title: str, word_in_paper: str) -> List[PaperData]:
     paperArray = getPapersFromMbio()
     return filterPapersOfInterest(
@@ -52,7 +49,7 @@ def filterPapersOfInterest(
         word_in_title: str,
         word_in_paper: str) -> List[PaperData]:
     papersTitleMatches = filter(
-        lambda paper: paper.title.find(word_in_title) != -1,
+        lambda paper: paper.title.lower().find(word_in_title) != -1,
         papers
     )
     return list(filter(
@@ -64,13 +61,12 @@ def filterPapersOfInterest(
 def isPaperContentOfInterest(url: str, word_in_paper: str) -> bool:
     response = requests.get(url, timeout=10)
     content = BeautifulSoup(response.content, "html.parser")
-    results = content.find('p').getText()
+    results = list(content.find('div', {'class': 'abstract'}))
     return isWordInResults(word_in_paper, results)
 
 
 def isWordInResults(word: str, results: List[any]) -> bool:
-
-    isWordInText = lambda res: res.text.find(word) != -1
+    isWordInText = lambda res: res.text.lower().find(word) != -1
     return any(map(isWordInText, results))
 
 
@@ -105,9 +101,4 @@ def getMbioPapersOfInterestInTitle(word: str):
             list.append(res)
     savePapersToJsonFile(list)
 
-getMbioPapersOfInterestInTitle("Virus")
-
-
-# Falta implementar esta función: getMbioPapersOfInterest, de leer palabras en paper ya que no pude
-# obtener el texto de los papers porque está dividido en muchas secciones :( se fue
-# de mis habilidades
+mbioScrappingAndOpenLinks('virus', 'covid-19')
