@@ -9,6 +9,7 @@ from typing import List
 from GenericScraper import GenericScraper
 from dataTypes.PaperData import PaperData
 
+LANCET_URL = 'https://www.thelancet.com/coronavirus'
 
 class LancetScraper(GenericScraper):
     def getPapersFromContent(self, content) -> List[PaperData]:
@@ -24,4 +25,4 @@ class LancetScraper(GenericScraper):
     def getPaperParagraphs(self, content) -> List[any]:
         return content.find_all("div", {"class": "section-paragraph"})   # Se obtienen todos los parrafos del paper
 
-LancetScraper().scrappingAndOpenLinks('https://www.thelancet.com/coronavirus', 'mask', 'covid-19')
+LancetScraper().scrappingAndOpenLinks(LANCET_URL, 'mask', 'covid-19')

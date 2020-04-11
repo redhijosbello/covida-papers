@@ -2,6 +2,8 @@ from typing import List
 from GenericScraper import GenericScraper
 from dataTypes.PaperData import PaperData
 
+MBIO_URL = 'https://mbio.asm.org/latest'
+
 class MbioScraper(GenericScraper):
     def getPapersFromContent(self, content) -> List[PaperData]:
         paperFromData = lambda paper: PaperData(
@@ -16,4 +18,4 @@ class MbioScraper(GenericScraper):
     def getPaperParagraphs(self, content) -> List[any]:
         return list(content.find('div', {'class': 'abstract'}))
 
-MbioScraper().scrappingAndOpenLinks('https://mbio.asm.org/latest', 'virus', 'covid-19')
+MbioScraper().scrappingAndOpenLinks(MBIO_URL, 'virus', 'covid-19')
