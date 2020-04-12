@@ -90,9 +90,4 @@ class GenericScraper(metaclass=abc.ABCMeta):
 	def getPaperParagraphs(self, content):
 		pass
 
-	""" No está implementado aún el descargar automáticamente el paper a local
-	    descarga = content.findAll('div', attrs={"class": "article-tools__holder pull-right"})
-	    for i in descarga:
-	        link = descarga.find('a')['href']
-	        webbrowser.open("https://www.thelancet.com" + link)
-	"""
+

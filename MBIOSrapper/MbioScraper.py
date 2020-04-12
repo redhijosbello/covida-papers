@@ -18,4 +18,4 @@ class MbioScraper(GenericScraper):
     def getPaperParagraphs(self, content) -> List[any]:
         return list(content.find('div', {'class': 'abstract'}))
 
-# MbioScraper().scrappingAndOpenLinks(MBIO_URL, 'virus', 'covid-19')
+#MbioScraper().scrappingAndOpenLinks(MBIO_URL, 'virus', 'covid-19')
