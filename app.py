@@ -32,6 +32,7 @@ def googleScholarOfInterest():
     word_in_paper = request.args.get('word_in_paper')
     return jsonify(getPapersFromGoogleScholar(1,word_in_paper))
 
+
 @app.route('/lancet/openLinksOfInterest')
 def openLinksOfInterest():
     word_in_title = request.args.get('word_in_title')
