@@ -16,7 +16,10 @@ class ArxivScraper(GenericScraper):
         ))
 
     def getPaperParagraphs(self, content) -> List[any]:
-        return content.find_all("p", {"class": "abstract mathjax"})   # Se obtienen todos los parrafos del paper
+        return content.find_all(
+            "p",
+            {"class": "abstract mathjax"}
+        )   # Se obtienen todos los parrafos del paper
 
 
 

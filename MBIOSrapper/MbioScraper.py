@@ -12,10 +12,14 @@ class MbioScraper(GenericScraper):
         )
         return list(map(
             paperFromData,
-            content.findAll('div', attrs={"class": "highwire-cite-col highlight-right-col"})
+            content.findAll(
+                'div', attrs={"class": "highwire-cite-col highlight-right-col"}
+            )
         ))
 
     def getPaperParagraphs(self, content) -> List[any]:
-        return list(content.find('div', {'class': 'abstract'}))
+        return list(content.find(
+            'div', {'class': 'abstract'}
+        ))
 
 #MbioScraper().scrappingAndOpenLinks(MBIO_URL, 'virus', 'covid-19')

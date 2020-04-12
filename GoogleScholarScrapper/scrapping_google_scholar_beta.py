@@ -91,4 +91,4 @@ class GoogleScholarScrapper():
         self.savePapersToJsonFile(list)
         return list
 
-GoogleScholarScrapper().getPapersFromGoogleScholar(1, "covid","mask")
+#GoogleScholarScrapper().getPapersFromGoogleScholar(1, "covid","mask")
