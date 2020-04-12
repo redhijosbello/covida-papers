@@ -7,7 +7,7 @@ ARXIV_URL = 'https://arxiv.org/search/advanced?advanced=&terms-0-operator=AND&te
 class ArxivScraper(GenericScraper):
     def getPapersFromContent(self, content) -> List[PaperData]:
         paperFromData = lambda paper: PaperData(
-            paper.find('p', attrs={"class": "title is-5 mathjax"}).text,
+            paper.find('p', attrs={"class": "title is-5 mathjax"}).text.strip(),
             paper.find('a')['href']
         )
         return list(map(
@@ -17,11 +17,8 @@ class ArxivScraper(GenericScraper):
 
     def getPaperParagraphs(self, content) -> List[any]:
         return content.find_all(
-            "p",
-            {"class": "abstract mathjax"}
+            "blockquote",
+            {"class": "abstract"}
         )   # Se obtienen todos los parrafos del paper
 
-
-
-
-
+# ArxivScraper().getPapersOfInterest(ARXIV_URL, 'virus', 'covid-19')

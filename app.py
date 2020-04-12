@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 
+from ArxivScrapper.ArxivScrapper import ArxivScraper, ARXIV_URL
 from LancetScrapper.LancetScraper import LANCET_URL, LancetScraper
 from MBIOSrapper.MbioScraper import MbioScraper, MBIO_URL
 from utils.PaperJsonEncoder import PaperJsonEncoder
@@ -8,6 +9,7 @@ app = Flask(__name__)
 app.json_encoder = PaperJsonEncoder
 lancetScraper = LancetScraper()
 mbioScraper = MbioScraper()
+arxivScraper = ArxivScraper()
 
 # lancet routes
 
@@ -54,3 +56,15 @@ def googleScholarOfInterest():
     return jsonify(GoogleScholarScrapper().getPapersFromGoogleScholar(
         1,
         word_in_paper))
+
+# arxiv
+
+@app.route('/arxiv/papersOfInterest')
+def arxivPapersOfInterest():
+    word_in_title = request.args.get('word_in_title')
+    word_in_paper = request.args.get('word_in_paper')
+    return jsonify(arxivScraper.getPapersOfInterest(
+        ARXIV_URL,
+        word_in_title,
+        word_in_paper)
+    )
