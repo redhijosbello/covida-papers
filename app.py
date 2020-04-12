@@ -25,14 +25,6 @@ def lancetPapersOfInterest():
         word_in_paper)
     )
     
-@app.route('/googlescholar/papersOfInterest')
-def googleScholarOfInterest():
-    word_in_paper = request.args.get('word_in_paper')
-    return jsonify(GoogleScholarScrapper().getPapersFromGoogleScholar(
-        1,
-        word_in_paper))
-
-
 @app.route('/lancet/openLinksOfInterest')
 def openLinksOfInterest():
     word_in_title = request.args.get('word_in_title')
@@ -54,4 +46,11 @@ def mbioPapersOfInterest():
         word_in_paper=word_in_paper)
     )
 
+# google scholar
 
+@app.route('/googlescholar/papersOfInterest')
+def googleScholarOfInterest():
+    word_in_paper = request.args.get('word_in_paper')
+    return jsonify(GoogleScholarScrapper().getPapersFromGoogleScholar(
+        1,
+        word_in_paper))
