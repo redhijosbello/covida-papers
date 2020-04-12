@@ -38,8 +38,10 @@ def openLinksOfInterest():
 def mbioPapersOfInterest():
     word_in_title = request.args.get('word_in_title')
     word_in_paper = request.args.get('word_in_paper')
-    return jsonify(mbioScraper.getPapersOfInterest(
+    return jsonify(mbioScraper.getPapersOfInterestPaginatedSource(
         MBIO_URL,
-        word_in_title,
-        word_in_paper)
+        startIdx=0,
+        endIdx=3,
+        word_in_title=word_in_title,
+        word_in_paper=word_in_paper)
     )

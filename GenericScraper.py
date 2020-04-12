@@ -13,6 +13,8 @@ from utils.PaperJsonEncoder import PaperJsonEncoder
 # los títulos está la palabra entregada como parámetro y si está lo que se quiere buscar en el texto del paper,
 # sirve como guia para empezar un Scrapping más complejo La función escribe un archivo .json con el título y el link
 # de referencia del paper si contiene la palabra en el titulo
+from utils.utils import flatmap
+
 
 class GenericScraper(metaclass=abc.ABCMeta):
 	def scrappingAndOpenLinks(
@@ -47,13 +49,27 @@ class GenericScraper(metaclass=abc.ABCMeta):
 			word_in_title: str,
 			word_in_paper: str) -> List[PaperData]:
 		papersTitleMatches = filter(
-			lambda paper: paper.title.find(word_in_title) != -1,
+			lambda paper: paper.title.lower().find(word_in_title.lower().strip()) != -1,
 			papers
 		)
 		return list(filter(
 			lambda paper: self.isPaperContentOfInterest(paper.link, word_in_paper),
 			papersTitleMatches
 		))
+
+	def getPapersOfInterestPaginatedSource(
+			self,
+			url: str,
+			startIdx: int,
+			endIdx: int,
+			word_in_title: str,
+			word_in_paper: str) -> List[PaperData]:
+		paperArray = self.getPapersFromPaginatedUrl(url, startIdx, endIdx)
+		return self.filterPapersOfInterest(
+			paperArray,
+			word_in_title,
+			word_in_paper
+		)
 
 	def isPaperContentOfInterest(self, url: str, word_in_paper: str) -> bool:
 		response = requests.get(url, timeout=10)
@@ -66,6 +82,16 @@ class GenericScraper(metaclass=abc.ABCMeta):
 		content = BeautifulSoup(response.content, "html.parser")
 		return self.getPapersFromContent(content)
 
+	def getPapersFromPaginatedUrl(self, url: str, initIdx: int, lastIdx: int) -> List[PaperData]:
+		urlArray = map(
+			lambda idx: url + str(idx),
+			range(initIdx, lastIdx + 1)
+		)
+		return list(flatmap(
+			lambda aUrl: self.getPapersFromUrl(aUrl),
+			urlArray
+		))
+
 	@classmethod
 	def savePapersToJsonFile(cls, paperArray: List[PaperData]) -> None:
 		with open('lancetSearchData.json', 'w') as outfile:
@@ -73,7 +99,7 @@ class GenericScraper(metaclass=abc.ABCMeta):
 
 	@classmethod
 	def isWordInResults(cls, word: str, results: List[any]) -> bool:
-		isWordInText = lambda res: res.text.lower().find(word) != -1
+		isWordInText = lambda res: res.text.lower().find(word.lower().strip()) != -1
 		return any(map(isWordInText, results))
 
 	@classmethod
