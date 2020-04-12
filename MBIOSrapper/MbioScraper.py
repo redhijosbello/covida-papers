@@ -22,12 +22,14 @@ class MbioScraper(GenericScraper):
         )
 
     def getPaperParagraphs(self, content) -> List[any]:
-        return list(content.find('div', {'class': 'abstract'}))
+        return list(content.find(
+            'div', {'class': 'abstract'}
+        ))
 
 # MbioScraper().scrappingAndOpenLinks(MBIO_URL, 'virus', 'covid-19')
 # MbioScraper().getPapersOfInterestPaginatedSource(
 #         MBIO_URL,
-#         startIdx=1,
-#         endIdx=5,
+#         startIdx=0,
+#         endIdx=4,
 #         word_in_title='covid',
 #         word_in_paper='covid')

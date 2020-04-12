@@ -23,6 +23,8 @@ class LancetScraper(GenericScraper):
         ))
 
     def getPaperParagraphs(self, content) -> List[any]:
-        return content.find_all("div", {"class": "section-paragraph"})   # Se obtienen todos los parrafos del paper
+        return content.find_all(
+            "div", {"class": "section-paragraph"}
+        )   # Se obtienen todos los parrafos del paper
 
 # LancetScraper().scrappingAndOpenLinks(LANCET_URL, 'mask', 'covid-19')

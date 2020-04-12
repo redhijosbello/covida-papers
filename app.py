@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from LancetScrapper.LancetScraper import LANCET_URL, LancetScraper
 from MBIOSrapper.MbioScraper import MbioScraper, MBIO_URL
 from utils.PaperJsonEncoder import PaperJsonEncoder
-
+from GoogleScholarScrapper.scrapping_google_scholar_beta import GoogleScholarScrapper
 app = Flask(__name__)
 app.json_encoder = PaperJsonEncoder
 lancetScraper = LancetScraper()
@@ -24,6 +24,14 @@ def lancetPapersOfInterest():
         word_in_title,
         word_in_paper)
     )
+    
+@app.route('/googlescholar/papersOfInterest')
+def googleScholarOfInterest():
+    word_in_paper = request.args.get('word_in_paper')
+    return jsonify(GoogleScholarScrapper().getPapersFromGoogleScholar(
+        1,
+        word_in_paper))
+
 
 @app.route('/lancet/openLinksOfInterest')
 def openLinksOfInterest():
@@ -45,3 +53,5 @@ def mbioPapersOfInterest():
         word_in_title=word_in_title,
         word_in_paper=word_in_paper)
     )
+
+
