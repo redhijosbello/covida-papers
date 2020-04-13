@@ -75,3 +75,6 @@ def arxivPapersOfInterest():
         word_in_title,
         word_in_paper)
     )
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
