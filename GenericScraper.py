@@ -48,6 +48,7 @@ class GenericScraper(metaclass=abc.ABCMeta):
 			papers: List[PaperData],
 			word_in_title: str,
 			word_in_paper: str) -> List[PaperData]:
+
 		papersTitleMatches = filter(
 			lambda paper: paper.title.lower().find(word_in_title.lower().strip()) != -1,
 			papers
@@ -63,8 +64,9 @@ class GenericScraper(metaclass=abc.ABCMeta):
 			startIdx: int,
 			endIdx: int,
 			word_in_title: str,
-			word_in_paper: str) -> List[PaperData]:
-		paperArray = self.getPapersFromPaginatedUrl(url, startIdx, endIdx)
+			word_in_paper: str,
+			step: int=1) -> List[PaperData]:
+		paperArray = self.getPapersFromPaginatedUrl(url, startIdx, endIdx, step=step)
 		return self.filterPapersOfInterest(
 			paperArray,
 			word_in_title,
@@ -82,10 +84,10 @@ class GenericScraper(metaclass=abc.ABCMeta):
 		content = BeautifulSoup(response.content, "html.parser")
 		return self.getPapersFromContent(content)
 
-	def getPapersFromPaginatedUrl(self, url: str, initIdx: int, lastIdx: int) -> List[PaperData]:
+	def getPapersFromPaginatedUrl(self, url: str, initIdx: int, lastIdx: int, step: int=1) -> List[PaperData]:
 		urlArray = map(
 			lambda idx: url + str(idx),
-			range(initIdx, lastIdx + 1)
+			range(initIdx, lastIdx + 1, step)
 		)
 		return list(flatmap(
 			lambda aUrl: self.getPapersFromUrl(aUrl),
