@@ -11,8 +11,8 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": [
     'http://localhost:3000',
     'https://covida-fd704.web.app',
-    'http://papers.covida.cl/',
-    'https://papers.covida.cl/'
+    'http://papers.covida.cl',
+    'https://papers.covida.cl'
 ]}})
 app.json_encoder = PaperJsonEncoder
 
