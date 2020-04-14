@@ -5,8 +5,17 @@ from LancetScrapper.LancetScraper import LANCET_URL, LancetScraper
 from MBIOSrapper.MbioScraper import MbioScraper, MBIO_URL
 from utils.PaperJsonEncoder import PaperJsonEncoder
 from GoogleScholarScrapper.scrapping_google_scholar_beta import GoogleScholarScrapper
+from flask_cors import CORS
+
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": [
+    'http://localhost:3000',
+    'https://covida-fd704.web.app',
+    'http://papers.covida.cl',
+    'https://papers.covida.cl'
+]}})
 app.json_encoder = PaperJsonEncoder
+
 lancetScraper = LancetScraper()
 mbioScraper = MbioScraper()
 arxivScraper = ArxivScraper()
@@ -68,3 +77,6 @@ def arxivPapersOfInterest():
         word_in_title,
         word_in_paper)
     )
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
