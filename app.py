@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 
 from ArxivScrapper.ArxivScrapper import ArxivScraper, ARXIV_URL
+from GoogleScholarScrapper.GoogleScholarScraper import GoogleScholarScrapper
 from LancetScrapper.LancetScraper import LANCET_URL, LancetScraper
 from MBIOSrapper.MbioScraper import MbioScraper, MBIO_URL
 from utils.PaperJsonEncoder import PaperJsonEncoder
-from GoogleScholarScrapper.scrapping_google_scholar_beta import GoogleScholarScrapper
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -63,7 +63,7 @@ def mbioPapersOfInterest():
 def googleScholarOfInterest():
     word_in_paper = request.args.get('word_in_paper')
     return jsonify(GoogleScholarScrapper().getPapersFromGoogleScholar(
-        1,
+        3,
         word_in_paper))
 
 # arxiv

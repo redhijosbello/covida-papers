@@ -117,5 +117,3 @@ class GenericScraper(metaclass=abc.ABCMeta):
 	@abc.abstractmethod
 	def getPaperParagraphs(self, content):
 		pass
-
-
