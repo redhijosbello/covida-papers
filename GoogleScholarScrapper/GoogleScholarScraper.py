@@ -11,7 +11,10 @@ class GoogleScholarScrapper(GenericScraper):
 
         return list(map(
             paperFromData,
-            content.find(id='gs_res_ccl_mid').findAll('div', recursive=False)
+            filter(
+                lambda paper: paper.h3 is not None and paper.h3.a is not None,
+                content.find(id='gs_res_ccl_mid').findAll('div', recursive=False)
+            )
         ))
 
     def getPaperParagraphs(self, content) -> List[any]:
