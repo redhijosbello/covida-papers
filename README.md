@@ -1,14 +1,9 @@
 # covida
 
 ### Requerimientos:
-```
-- pip install bs4
-- pip install requests
-- pip install Flask
-- pip install -U flask-cors
-- pip install pandas
-- pip install selenium
-```
+
+Ver requirements.txt, se pueden instalar los packages con pip.
+
 - mas info de Flask: https://flask.palletsprojects.com/en/1.1.x/installation/
 - Ojo: no instalen SimpleJson, que tiene conflictos en esta app.
 
