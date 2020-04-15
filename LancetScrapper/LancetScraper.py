@@ -27,4 +27,5 @@ class LancetScraper(GenericScraper):
             "div", {"class": "section-paragraph"}
         )   # Se obtienen todos los parrafos del paper
 
-# LancetScraper().scrappingAndOpenLinks(LANCET_URL, 'mask', 'covid-19')
+if __name__ == "__main__":
+    LancetScraper().scrappingAndOpenLinks(LANCET_URL, 'mask', 'covid-19')
