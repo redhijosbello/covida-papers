@@ -21,4 +21,5 @@ class ArxivScraper(GenericScraper):
             {"class": "abstract"}
         )   # Se obtienen todos los parrafos del paper
 
-# ArxivScraper().getPapersOfInterest(ARXIV_URL, 'virus', 'covid-19')
+if __name__ == "__main__":
+    ArxivScraper().getPapersOfInterest(ARXIV_URL, 'virus', 'covid-19')

@@ -2,6 +2,7 @@ from typing import List
 from GenericScraper import GenericScraper
 from dataTypes.PaperData import PaperData
 
+MBIO_URL_NO_PAGE = 'https://mbio.asm.org/latest'
 MBIO_URL = 'https://mbio.asm.org/latest?page='
 
 class MbioScraper(GenericScraper):
@@ -26,10 +27,5 @@ class MbioScraper(GenericScraper):
             'div', {'class': 'abstract'}
         ))
 
-# MbioScraper().scrappingAndOpenLinks(MBIO_URL, 'virus', 'covid-19')
-# MbioScraper().getPapersOfInterestPaginatedSource(
-#         MBIO_URL,
-#         startIdx=0,
-#         endIdx=4,
-#         word_in_title='covid',
-#         word_in_paper='covid')
+if __name__ == "__main__":
+    MbioScraper().scrappingAndOpenLinks(MBIO_URL_NO_PAGE, 'virus', 'covid')

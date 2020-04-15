@@ -27,4 +27,5 @@ class GoogleScholarScrapper(GenericScraper):
             step=10
         )
 
-#GoogleScholarScrapper().getPapersFromGoogleScholar(1, "covid","mask")
+if __name__ == "__main__":
+    GoogleScholarScrapper().getPapersFromGoogleScholar(1, "covid", "mask")
