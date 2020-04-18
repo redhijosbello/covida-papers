@@ -16,7 +16,7 @@ class LancetScraper(GenericScraper):
         paperFromData = lambda paper: PaperData(
             paper.find('h4', attrs={"class": "title"}).text,
             "https://www.thelancet.com" + paper.find('a')['href'],
-            parser.parse(paper.find('div', attrs={"class": "published-online"}).text.strip()[11:]) if paper.find('div', attrs={"class": "published-online"}) is not None else "None dateTime finded"
+            parser.parse(paper.find('div', attrs={"class": "published-online"}).text.strip()[11:]) if paper.find('div', attrs={"class": "published-online"}) is not None else None
         )
         return list(map(
             paperFromData,

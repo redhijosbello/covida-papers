@@ -10,7 +10,7 @@ class GoogleScholarScrapper(GenericScraper):
         paperFromData = lambda paper: PaperData(
             paper.h3.a.text,
             paper.h3.a.attrs['href'],
-            datetime.datetime.now() ## Por supuesto que esto no tiene sentido pero no sé como obtener la fecha en esa página
+            None   # Por supuesto que esto no tiene sentido pero no sé como obtener la fecha en esa página
         )
 
         return list(map(

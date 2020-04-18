@@ -65,7 +65,7 @@ class GenericScraper(metaclass=abc.ABCMeta):
 			endIdx: int,
 			word_in_title: str,
 			word_in_paper: str,
-			step: int=1) -> List[PaperData]:
+			step: int = 1) -> List[PaperData]:
 		paperArray = self.getPapersFromPaginatedUrl(url, startIdx, endIdx, step=step)
 		return self.filterPapersOfInterest(
 			paperArray,
