@@ -1,12 +1,16 @@
 from typing import List
 from dataTypes.PaperData import PaperData
 from GenericScraper import GenericScraper
+import datetime
+
+
 
 class GoogleScholarScrapper(GenericScraper):
     def getPapersFromContent(self, content) -> List[PaperData]:
         paperFromData = lambda paper: PaperData(
             paper.h3.a.text,
-            paper.h3.a.attrs['href']
+            paper.h3.a.attrs['href'],
+            datetime.datetime.now() ## Por supuesto que esto no tiene sentido pero no sé como obtener la fecha en esa página
         )
 
         return list(map(

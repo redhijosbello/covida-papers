@@ -1,6 +1,7 @@
 from typing import List
 from GenericScraper import GenericScraper
 from dataTypes.PaperData import PaperData
+from dateutil import parser
 
 MBIO_URL_NO_PAGE = 'https://mbio.asm.org/latest'
 MBIO_URL = 'https://mbio.asm.org/latest?page='
@@ -9,7 +10,8 @@ class MbioScraper(GenericScraper):
     def getPapersFromContent(self, content) -> List[PaperData]:
         paperFromData = lambda paper: PaperData(
             paper.find('a', attrs={"class": "highwire-cite-linked-title"}).text,
-            "https://mbio.asm.org" + paper.find('a')['href']
+            "https://mbio.asm.org" + paper.find('a')['href'],
+            parser.parse(paper.find('div', attrs={"class": "highwire-cite-metadata"}).text)
         )
         return list(
             map(
@@ -28,4 +30,6 @@ class MbioScraper(GenericScraper):
         ))
 
 if __name__ == "__main__":
-    MbioScraper().scrappingAndOpenLinks(MBIO_URL_NO_PAGE, 'virus', 'covid')
+    for i in MbioScraper().getPapersFromUrl('https://mbio.asm.org/latest'):
+        print(i.title)
+        print(i.dateTime)
